@@ -1,0 +1,65 @@
+CREATE DATABASE LojaDeVinhos;
+USE LojaDeVinhos;
+
+CREATE TABLE Regiao (
+    codRegiao BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nomeRegiao VARCHAR(100) NOT NULL,
+    descricaoRegiao TEXT
+);
+
+CREATE TABLE Vinicola (
+    codVinicola BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nomeVinicola VARCHAR(100) NOT NULL,
+    descricaoVinicola TEXT,
+    foneVinicola VARCHAR(50),
+    emailVinicola VARCHAR(50),
+    codRegiao BIGINT,
+    FOREIGN KEY (codRegiao) REFERENCES Regiao(codRegiao)
+);
+
+CREATE TABLE Vinho (
+    codVinho BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nomeVinho VARCHAR(50) NOT NULL,
+    tipoVinho VARCHAR(30),
+    anoVinho INT,
+    descricaoVinho TEXT,
+    codVinicola BIGINT,
+    FOREIGN KEY (codVinicola) REFERENCES Vinicola(codVinicola)
+);
+
+-- Inserir registros em Regiao
+INSERT INTO Regiao (nomeRegiao, descricaoRegiao) VALUES
+    ('Bordeaux', 'Região vinícola famosa na França'),
+    ('Napa Valley', 'Região vinícola famosa nos Estados Unidos'),
+    ('Mendoza', 'Região vinícola famosa na Argentina'),
+    ('Toscana', 'Região vinícola famosa na Itália'),
+    ('Rioja', 'Região vinícola famosa na Espanha');
+
+-- Inserir registros em Vinicola
+INSERT INTO Vinicola (nomeVinicola, descricaoVinicola, foneVinicola, emailVinicola, codRegiao) VALUES
+    ('Chateau Margaux', 'Uma das mais prestigiadas vinícolas de Bordeaux.', '+33 5 57 88 83 83', 'info@chateaumargaux.com', 1),
+    ('Opus One Winery', 'Famosa vinícola em Napa Valley.', '+1 707-944-9442', 'info@opusonewinery.com', 2),
+    ('Bodega Catena Zapata', 'Vinícola renomada na Argentina.', '+54 261 413-1100', 'info@catenawines.com', 3),
+    ('Antinori', 'Vinícola histórica na Toscana.', '+39 055 23 595', 'info@antinori.it', 4),
+    ('Bodegas Ramón Bilbao', 'Vinícola tradicional em Rioja.', '+34 941 30 00 94', 'info@ramonbilbao.es', 5);
+
+-- Inserir registros em Vinho
+INSERT INTO Vinho (nomeVinho, tipoVinho, anoVinho, descricaoVinho, codVinicola) VALUES
+    ('Chateau Margaux 2015', 'Tinto', 2015, 'Um vinho tinto excepcional de Bordeaux.', 1),
+    ('Opus One 2017', 'Tinto', 2017, 'Blend premium de Napa Valley.', 2),
+    ('Catena Malbec 2018', 'Tinto', 2018, 'Malbec argentino de alta qualidade.', 3),
+    ('Tignanello 2016', 'Tinto', 2016, 'Vinho tinto toscano icônico.', 4),
+    ('Ramón Bilbao Crianza 2016', 'Tinto', 2016, 'Um Rioja clássico.', 5);
+
+ALTER USER 'Sommelier'@'localhost' IDENTIFIED BY 'SenhaDoSommelier';
+
+GRANT SELECT ON LojaDeVinhos.Vinho TO 'Sommelier'@'localhost';
+
+GRANT SELECT (codVinicola, nomeVinicola) ON LojaDeVinhos.Vinicola TO 'Sommelier'@'localhost';
+
+ALTER USER 'Sommelier'@'localhost' WITH MAX_QUERIES_PER_HOUR 40;
+
+-- Consulta
+SELECT vinho.nomeVinho, vinho.anoVinho, vinicola.nomeVinicola, regiao.nomeRegiao FROM lojadevinhos.vinho
+INNER JOIN lojadevinhos.vinicola ON vinicola.codVinicola=vinho.codVinicola
+INNER JOIN lojadevinhos.regiao ON vinicola.codRegiao=regiao.codRegiao
