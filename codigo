@@ -51,15 +51,13 @@ INSERT INTO Vinho (nomeVinho, tipoVinho, anoVinho, descricaoVinho, codVinicola) 
     ('Tignanello 2016', 'Tinto', 2016, 'Vinho tinto toscano icônico.', 4),
     ('Ramón Bilbao Crianza 2016', 'Tinto', 2016, 'Um Rioja clássico.', 5);
 
-ALTER USER 'Sommelier'@'localhost' IDENTIFIED BY 'SenhaDoSommelier';
+SELECT vinho.nomeVinho, vinho.anoVinho, vinicola.nomeVinicola, regiao.nomeRegiao FROM LojaDeVinhos.vinho
+INNER JOIN LojaDeVinhos.vinicola ON vinicola.codVinicola=vinho.codVinicola
+INNER JOIN LojaDeVinhos.regiao ON vinicola.codRegiao=regiao.codRegiao;
 
+DROP USER IF EXISTS 'Sommelier'@'localhost';
+CREATE USER 'Sommelier'@'localhost' IDENTIFIED BY 'SenhaDoSommelier';
 GRANT SELECT ON LojaDeVinhos.Vinho TO 'Sommelier'@'localhost';
-
 GRANT SELECT (codVinicola, nomeVinicola) ON LojaDeVinhos.Vinicola TO 'Sommelier'@'localhost';
 
 ALTER USER 'Sommelier'@'localhost' WITH MAX_QUERIES_PER_HOUR 40;
-
--- Consulta
-SELECT vinho.nomeVinho, vinho.anoVinho, vinicola.nomeVinicola, regiao.nomeRegiao FROM lojadevinhos.vinho
-INNER JOIN lojadevinhos.vinicola ON vinicola.codVinicola=vinho.codVinicola
-INNER JOIN lojadevinhos.regiao ON vinicola.codRegiao=regiao.codRegiao
